@@ -20,7 +20,7 @@ data "aws_vpc" "default" {
 resource "aws_instance" "vm_web" {
   # count       = 2
   # ami         = data.aws_ami.ubuntu.id
-  ami         = data.aws_ami.amazon_linux_2023.id
+  ami         = data.aws_ami.amazon_linux.id
   # ami           = "ami-0f5470fce514b0d36" # get from aws > ec2 > instances > Launch an instance
   instance_type = var.instance_type
 
@@ -33,6 +33,23 @@ resource "aws_instance" "vm_web" {
   # lifecycle {
   #   create_before_destroy = true
   # }
+}
+
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+  filter {
+    name = "name"
+    values = [
+      "amzn-ami-hvm-*-x86_64-gp2",
+    ]
+  }
+  filter {
+    name = "owner-alias"
+    values = [
+      "amazon",
+    ]
+  }
+   owners      = ["amazon"]
 }
 
 resource "aws_security_group" "vm_web" {
