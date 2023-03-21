@@ -36,7 +36,7 @@ module "vpc" {
 }
 
 #        "resource type" "resource name"
-resource "aws_instance" "vm_web01" {
+resource "aws_instance" "vm_web" {
   # count       = 2
   # ami         = data.aws_ami.ubuntu.id
   ami         = data.aws_ami.amazon_linux.id
@@ -44,7 +44,7 @@ resource "aws_instance" "vm_web01" {
   instance_type = var.instance_type
 
   # vpc_security_group_ids = [aws_security_group.vm_web.id]
-  # vpc_security_group_ids = [module.security_web.security_group_id]
+  vpc_security_group_ids = [module.security_web.security_group_id]
   tags = {
     Name = "server for web"
     Env  = "dev"
@@ -107,20 +107,20 @@ data "aws_ami" "amazon_linux" {
 #   security_group_id   = aws_security_group.vm_web.id
 # }
 
-# module "security_web" {
-#   source  = "terraform-aws-modules/security-group/aws"
-#   version = "4.17.1"
-#   name    = "web_new"
+module "security_web" {
+  source  = "terraform-aws-modules/security-group/aws"
+  version = "4.17.1"
+  name    = "web_new"
 
-#   # vpc_id    = data.aws_vpc.default.id
-#   vpc_id      = module.vpc.public_subnets[0]
+  # vpc_id    = data.aws_vpc.default.id
+  vpc_id      = module.vpc.public_subnets[0]
 
-#   ingress_cidr_blocks      = ["0.0.0.0/0"]
-#   ingress_rules            = ["https-443-tcp", "http-80-tcp"]
+  ingress_cidr_blocks      = ["0.0.0.0/0"]
+  ingress_rules            = ["https-443-tcp", "http-80-tcp"]
 
-#   egress_cidr_blocks      = ["0.0.0.0/0"]
-#   egress_rules            = ["all-all"]
-# }
+  egress_cidr_blocks      = ["0.0.0.0/0"]
+  egress_rules            = ["all-all"]
+}
 
 # ***EIP***
 # resource "aws_eip" "blog" {
