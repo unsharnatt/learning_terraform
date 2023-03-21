@@ -35,7 +35,7 @@ resource "aws_instance" "vm_web" {
   # }
 }
 
-resource "aws_security_group" "allow_tls" {
+resource "aws_security_group" "vm_web" {
   name        = "vm_web"
   description = "allows http and https"
 
