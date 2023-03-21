@@ -12,19 +12,19 @@ provider "aws" {
   region  = "eu-west-2"
 }
 
-resource "aws_vpc" "default" {
+data "aws_vpc" "default" {
   default = true
 }
 
 #        "resource type" "resource name"
-resource "aws_instance" "vm-web" {
+resource "aws_instance" "vm_web" {
   # count       = 2
   # ami         = data.aws_ami.ubuntu.id
   ami         = data.aws_ami.amazon_linux.id
   # ami           = "ami-0f5470fce514b0d36" # get from aws > ec2 > instances > Launch an instance
   instance_type = var.instance_type
 
-  vpc_security_group_ids = [aws_security_group.blog.id]
+  vpc_security_group_ids = [aws_security_group.vm_web.id]
   tags = {
     Name = "server for web"
     Env  = "dev"
@@ -36,37 +36,37 @@ resource "aws_instance" "vm-web" {
 }
 
 resource "aws_security_group" "allow_tls" {
-  name        = "blog"
+  name        = "vm_web"
   description = "allows http and https"
 
   vpc_id      = data.aws_vpc.default.id
 }
 
-resource "aws_security_group_rule" "blog_http_in" {
+resource "aws_security_group_rule" "vm_web_http_in" {
   type                = "ingress"
   from_port           = 80
   to_port             = 80
   protocal            = "tcp"
   cidr_blocks         = ["0.0.0.0/0"]
-  security_group_id   = aws_security_group.blog.id
+  security_group_id   = aws_security_group.vm_web.id
 }
 
-resource "aws_security_group_rule" "blog_https_in" {
+resource "aws_security_group_rule" "vm_web_https_in" {
   type                = "ingress"
   from_port           = 443
   to_port             = 443
   protocal            = "tcp"
   cidr_blocks         = ["0.0.0.0/0"]
-  security_group_id   = aws_security_group.blog.id
+  security_group_id   = aws_security_group.vm_web.id
 }
 
-resource "aws_security_group_rule" "blog_everything_out" {
+resource "aws_security_group_rule" "vm_web_everything_out" {
   type                = "engress"
   from_port           = 0
   to_port             = 0
   protocal            = "-1"
   cidr_blocks         = ["0.0.0.0/0"]
-  security_group_id   = aws_security_group.blog.id
+  security_group_id   = aws_security_group.vm_web.id
 }
 
 # ***EIP***
