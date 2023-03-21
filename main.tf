@@ -72,40 +72,40 @@ data "aws_ami" "amazon_linux" {
    owners      = ["amazon"]
 }
 
-resource "aws_security_group" "vm_web" {
-  name        = "vm_web"
-  description = "allows http and https"
+# resource "aws_security_group" "vm_web" {
+#   name        = "vm_web"
+#   description = "allows http and https"
 
-  # vpc_id    = data.aws_vpc.default.id
-  vpc_id      = module.vpc.public_subnets[0]
-}
+#   # vpc_id    = data.aws_vpc.default.id
+#   vpc_id      = module.vpc.public_subnets[0]
+# }
 
-resource "aws_security_group_rule" "vm_web_http_in" {
-  type                = "ingress"
-  from_port           = 80
-  to_port             = 80
-  protocol            = "tcp"
-  cidr_blocks         = ["0.0.0.0/0"]
-  security_group_id   = aws_security_group.vm_web.id
-}
+# resource "aws_security_group_rule" "vm_web_http_in" {
+#   type                = "ingress"
+#   from_port           = 80
+#   to_port             = 80
+#   protocol            = "tcp"
+#   cidr_blocks         = ["0.0.0.0/0"]
+#   security_group_id   = aws_security_group.vm_web.id
+# }
 
-resource "aws_security_group_rule" "vm_web_https_in" {
-  type                = "ingress"
-  from_port           = 443
-  to_port             = 443
-  protocol            = "tcp"
-  cidr_blocks         = ["0.0.0.0/0"]
-  security_group_id   = aws_security_group.vm_web.id
-}
+# resource "aws_security_group_rule" "vm_web_https_in" {
+#   type                = "ingress"
+#   from_port           = 443
+#   to_port             = 443
+#   protocol            = "tcp"
+#   cidr_blocks         = ["0.0.0.0/0"]
+#   security_group_id   = aws_security_group.vm_web.id
+# }
 
-resource "aws_security_group_rule" "vm_web_everything_out" {
-  type                = "egress"
-  from_port           = 0
-  to_port             = 0
-  protocol            = "-1"
-  cidr_blocks         = ["0.0.0.0/0"]
-  security_group_id   = aws_security_group.vm_web.id
-}
+# resource "aws_security_group_rule" "vm_web_everything_out" {
+#   type                = "egress"
+#   from_port           = 0
+#   to_port             = 0
+#   protocol            = "-1"
+#   cidr_blocks         = ["0.0.0.0/0"]
+#   security_group_id   = aws_security_group.vm_web.id
+# }
 
 module "security_web" {
   source  = "terraform-aws-modules/security-group/aws"
