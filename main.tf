@@ -14,7 +14,7 @@ provider "aws" {
 
 resource "aws_instance" "vm-web" {
   ami           = "ami-0f5470fce514b0d36" # get from aws > ec2 > instances > Launch an instance
-  instance_type = "t2.micro"
+  instance_type = var.instance_type
 
   tags = {
     Name = "server for web"
