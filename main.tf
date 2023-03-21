@@ -12,8 +12,27 @@ provider "aws" {
   region  = "eu-west-2"
 }
 
-data "aws_vpc" "default" {
-  default = true
+# data "aws_vpc" "default" {
+#   default = true
+# }
+
+module "vpc" {
+  source = "terraform-aws-modules/vpc/aws"
+
+  name = "my-dev"
+  cidr = "10.0.0.0/16"
+
+  azs             = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
+  # private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
+
+  enable_nat_gateway = true
+  # enable_vpn_gateway = true
+
+  tags = {
+    Terraform = "true"
+    Environment = "dev"
+  }
 }
 
 #        "resource type" "resource name"
@@ -57,7 +76,8 @@ resource "aws_security_group" "vm_web" {
   name        = "vm_web"
   description = "allows http and https"
 
-  vpc_id      = data.aws_vpc.default.id
+  # vpc_id    = data.aws_vpc.default.id
+  vpc_id      = module.vpc.public_subnets[0]
 }
 
 resource "aws_security_group_rule" "vm_web_http_in" {
