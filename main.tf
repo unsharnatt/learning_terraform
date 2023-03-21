@@ -13,7 +13,7 @@ provider "aws" {
 }
 
 resource "aws_instance" "vm-web" {
-  ami           = "ami-830c94e3"
+  ami           = "data.aws_ami.app_ami.id" # not a global image
   instance_type = "t2.micro"
 
   tags = {
