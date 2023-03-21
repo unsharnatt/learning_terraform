@@ -63,7 +63,7 @@ resource "aws_security_group_rule" "vm_web_http_in" {
   type                = "ingress"
   from_port           = 80
   to_port             = 80
-  protocal            = "tcp"
+  protocol            = "tcp"
   cidr_blocks         = ["0.0.0.0/0"]
   security_group_id   = aws_security_group.vm_web.id
 }
@@ -72,7 +72,7 @@ resource "aws_security_group_rule" "vm_web_https_in" {
   type                = "ingress"
   from_port           = 443
   to_port             = 443
-  protocal            = "tcp"
+  protocol            = "tcp"
   cidr_blocks         = ["0.0.0.0/0"]
   security_group_id   = aws_security_group.vm_web.id
 }
@@ -81,7 +81,7 @@ resource "aws_security_group_rule" "vm_web_everything_out" {
   type                = "engress"
   from_port           = 0
   to_port             = 0
-  protocal            = "-1"
+  protocol            = "-1"
   cidr_blocks         = ["0.0.0.0/0"]
   security_group_id   = aws_security_group.vm_web.id
 }
@@ -114,13 +114,13 @@ resource "aws_security_group_rule" "vm_web_everything_out" {
 #   ingress {
 #     form_port   = 443
 #     to_port     = 443
-#     protocal    = "tcp"
+#     protocol    = "tcp"
 #     cidr_blocks = ["1.0.0.0/32"] 
 #   }
 #   egress {
 #     from_port = 0    # allow any port 
 #     to_port   = 0
-#     protocal  = "-1" # allow any protocal 
+#     protocol  = "-1" # allow any protocol 
 #   }
 # }
 
@@ -129,7 +129,7 @@ resource "aws_security_group_rule" "vm_web_everything_out" {
 #   type                = "ingress"
 #   from_port           = 443
 #   to_port             = 443
-#   protocal            = "tcp"
+#   protocol            = "tcp"
 #   cidr_blocks         = ["0.0.0.0/32"]
 #   security_group_id   = aws_security_group.allow_tls.id
 # }
