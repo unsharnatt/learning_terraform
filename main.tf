@@ -112,7 +112,8 @@ module "security_web" {
   version = "4.17.1"
   name    = "web_new"
 
-  vpc_id  = data.aws_vpc.default.id
+  # vpc_id    = data.aws_vpc.default.id
+  vpc_id      = module.vpc.public_subnets[0]
 
   ingress_cidr_blocks      = ["0.0.0.0/0"]
   ingress_rules            = ["https-443-tcp", "http-80-tcp"]
