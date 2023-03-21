@@ -78,7 +78,7 @@ resource "aws_security_group_rule" "vm_web_https_in" {
 }
 
 resource "aws_security_group_rule" "vm_web_everything_out" {
-  type                = "engress"
+  type                = "egress"
   from_port           = 0
   to_port             = 0
   protocol            = "-1"
