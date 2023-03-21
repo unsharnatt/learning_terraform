@@ -24,7 +24,8 @@ resource "aws_instance" "vm_web" {
   # ami           = "ami-0f5470fce514b0d36" # get from aws > ec2 > instances > Launch an instance
   instance_type = var.instance_type
 
-  vpc_security_group_ids = [aws_security_group.vm_web.id]
+  # vpc_security_group_ids = [aws_security_group.vm_web.id]
+  vpc_security_group_ids = [module.security_web.security_group_id]
   tags = {
     Name = "server for web"
     Env  = "dev"
@@ -84,6 +85,20 @@ resource "aws_security_group_rule" "vm_web_everything_out" {
   protocol            = "-1"
   cidr_blocks         = ["0.0.0.0/0"]
   security_group_id   = aws_security_group.vm_web.id
+}
+
+module "security_web" {
+  source  = "terraform-aws-modules/security-group/aws"
+  version = "4.17.1"
+  name    = "web_new"
+
+  vpc_id  = data.aws_vpc.default.id
+
+  ingress_cidr_blocks      = ["0.0.0.0/0"]
+  ingress_rules            = ["https-443-tcp", "http-80-tcp"]
+
+  egress_cidr_blocks      = ["0.0.0.0/0"]
+  engress_rules            = ["all-all"]
 }
 
 # ***EIP***
