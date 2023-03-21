@@ -20,7 +20,8 @@ resource "aws_vpc" "default" {
 resource "aws_instance" "vm-web" {
   # count       = 2
   # ami         = data.aws_ami.ubuntu.id
-  ami           = "ami-0f5470fce514b0d36" # get from aws > ec2 > instances > Launch an instance
+  ami         = data.aws_ami.amazon_linux.id
+  # ami           = "ami-0f5470fce514b0d36" # get from aws > ec2 > instances > Launch an instance
   instance_type = var.instance_type
 
   vpc_security_group_ids = [aws_security_group.blog.id]
