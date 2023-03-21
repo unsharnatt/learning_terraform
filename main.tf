@@ -36,7 +36,7 @@ module "vpc" {
 }
 
 #        "resource type" "resource name"
-resource "aws_instance" "vm_web" {
+resource "aws_instance" "vm_web01" {
   # count       = 2
   # ami         = data.aws_ami.ubuntu.id
   ami         = data.aws_ami.amazon_linux.id
