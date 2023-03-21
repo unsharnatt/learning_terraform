@@ -98,7 +98,7 @@ module "security_web" {
   ingress_rules            = ["https-443-tcp", "http-80-tcp"]
 
   egress_cidr_blocks      = ["0.0.0.0/0"]
-  engress_rules            = ["all-all"]
+  egress_rules            = ["all-all"]
 }
 
 # ***EIP***
