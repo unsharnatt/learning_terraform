@@ -41,7 +41,7 @@ module "security_web" {
   name    = "vm_web"
 
   # vpc_id    = data.aws_vpc.default.id
-  vpc_id      = module.vpc.public_subnets[0]
+  vpc_id      = module.vpc.vpc_id
 
   ingress_cidr_blocks      = ["0.0.0.0/0"]
   ingress_rules            = ["https-443-tcp", "http-80-tcp"]
@@ -59,7 +59,7 @@ resource "aws_instance" "vm_web" {
   instance_type = var.instance_type
 
   # vpc_security_group_ids = [aws_security_group.vm_web.id]
-  # vpc_security_group_ids = [module.security_web.security_group_id]
+  vpc_security_group_ids = [module.security_web.security_group_id]
   tags = {
     Name = "server for web"
     Env  = "dev"
@@ -70,6 +70,62 @@ resource "aws_instance" "vm_web" {
   # }
 }
 
+module "alb" {
+  source  = "terraform-aws-modules/alb/aws"
+  version = "~> 8.0"
+
+  name = "web-alb"
+
+  load_balancer_type = "application"
+
+  vpc_id             = module.vpc.vpc_id
+  subnets            = module.vpc.public_subnets
+  security_groups    = module.security_web.security_group_id
+
+  # access_logs = {
+  #   bucket = "my-alb-logs"
+  # }
+
+  target_groups = [
+    {
+      name_prefix      = "web-"
+      backend_protocol = "HTTP"
+      backend_port     = 80
+      target_type      = "instance"
+      targets = {
+        my_target = {
+          target_id = aws_instance.vm_web.id
+          port = 80
+        }
+        # my_other_target = {
+        #   target_id = "i-a1b2c3d4e5f6g7h8i"
+        #   port = 8080
+        # }
+      }
+    }
+  ]
+
+  # https_listeners = [
+  #   {
+  #     port               = 443
+  #     protocol           = "HTTPS"
+  #     certificate_arn    = "arn:aws:iam::123456789012:server-certificate/test_cert-123456789012"
+  #     target_group_index = 0
+  #   }
+  # ]
+
+  http_tcp_listeners = [
+    {
+      port               = 80
+      protocol           = "HTTP"
+      target_group_index = 0
+    }
+  ]
+
+  tags = {
+    Environment = "dev"
+  }
+}
 
 data "aws_ami" "amazon_linux" {
   most_recent = true
