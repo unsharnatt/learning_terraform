@@ -19,19 +19,20 @@ provider "aws" {
 module "web_vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
-  name = "dev"
-  cidr = "10.0.0.0/16"
+  name = var.environment.name
+  cidr = "${var.environment.network_prefix}.0.0/16"
 
   azs             = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
   # private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
+  public_subnets  = ["${var.environment.network_prefix}.101.0/24", "${var.environment.network_prefix}.102.0/24", "${var.environment.network_prefix}.103.0/24"]
+
 
   enable_nat_gateway = true
   # enable_vpn_gateway = true
 
   tags = {
     Terraform = "true"
-    Environment = "dev"
+    Environment = var.environment.name
   }
 }
 
@@ -76,9 +77,9 @@ module "autoscaling" {
   source    = "terraform-aws-modules/autoscaling/aws"
   # version = "6.5.2"
 
-  name      = "as_web"
-  min_size  = 1
-  max_size  = 1
+  name                = "as_web"
+  min_size            = var.asg_min
+  max_size            = var.asg_max
 
   vpc_zone_identifier = module.web_vpc.public_subnets
   target_group_arns   = module.alb.target_group_arns
@@ -147,35 +148,31 @@ data "aws_ami" "tomcat_linux" {
   most_recent = true
 
   filter {
-    name = "name"
-    values = [
-      "bitnami-tomcat-*-x86_64-hvm-ebs-nami",
-    ]
+    name   = "name"
+    values = [var.ami_filter.name]
   }
 
   filter {
-    name = "virtualization-type"
+    name   = "virtualization-type"
     values = [ "hvm"]
   }
 
-  owners      = ["979382823631"] # bitnami
+  owners = [var.ami_filter.owner] # Bitnami
 }
 
 data "aws_ami" "amazon_linux" {
   most_recent = true
   filter {
-    name = "name"
+    name   = "name"
     values = [
       "amzn-ami-hvm-*-x86_64-gp2",
     ]
   }
   filter {
-    name = "owner-alias"
-    values = [
-      "amazon",
-    ]
+    name   = "owner-alias"
+    values = [ "amazon", ]
   }
-   owners      = ["amazon"]
+   owners  = ["amazon"]
 }
 
 # resource "aws_security_group" "vm_web" {
