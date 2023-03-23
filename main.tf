@@ -16,7 +16,7 @@ provider "aws" {
 #   default = true
 # }
 
-module "vpc" {
+module "web_vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
   name = "dev"
@@ -41,7 +41,7 @@ module "security_web" {
   name    = "vm_web"
 
   # vpc_id    = data.aws_vpc.default.id
-  vpc_id      = module.vpc.vpc_id
+  vpc_id      = module.web_vpc.vpc_id
 
   ingress_cidr_blocks      = ["0.0.0.0/0"]
   ingress_rules            = ["https-443-tcp", "http-80-tcp"]
@@ -78,8 +78,8 @@ module "alb" {
 
   load_balancer_type = "application"
 
-  vpc_id             = module.vpc.vpc_id
-  subnets            = module.vpc.public_subnets
+  vpc_id             = module.web_vpc.vpc_id
+  subnets            = module.web_vpc.public_subnets
   security_groups    = [module.security_web.security_group_id]
 
   # access_logs = {
@@ -125,6 +125,24 @@ module "alb" {
   tags = {
     Environment = "dev"
   }
+}
+
+data "aws_ami" "tomcat_linux" {
+  most_recent = true
+
+  filter {
+    name = "name"
+    values = [
+      "bitnami-tomcat-*-x86_64-hvm-ebs-nami",
+    ]
+  }
+
+  filter {
+    name = "virtualization-type"
+    values = [ "hvm"]
+  }
+
+  owners      = ["979382823631"] # bitnami
 }
 
 data "aws_ami" "amazon_linux" {
