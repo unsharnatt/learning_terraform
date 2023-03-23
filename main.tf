@@ -78,7 +78,7 @@ module "autoscaling" {
 
   name      = "vm_web"
   min_size  = 1
-  max_size  = 2
+  max_size  = 1
 
   vpc_zone_identifier = module.web_vpc.public_subnets
   target_group_arns   = module.alb.target_group_arns
