@@ -35,26 +35,6 @@ module "vpc" {
   }
 }
 
-#        "resource type" "resource name"
-resource "aws_instance" "vm_web" {
-  # count       = 2
-  # ami         = data.aws_ami.ubuntu.id
-  ami         = data.aws_ami.amazon_linux.id
-  # ami           = "ami-0f5470fce514b0d36" # get from aws > ec2 > instances > Launch an instance
-  instance_type = var.instance_type
-
-  # vpc_security_group_ids = [aws_security_group.vm_web.id]
-  vpc_security_group_ids = [module.security_web.security_group_id]
-  tags = {
-    Name = "server for web"
-    Env  = "dev"
-  }
-
-  # lifecycle {
-  #   create_before_destroy = true
-  # }
-}
-
 module "security_web" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "4.17.1"
@@ -69,6 +49,27 @@ module "security_web" {
   egress_cidr_blocks      = ["0.0.0.0/0"]
   egress_rules            = ["all-all"]
 }
+
+#        "resource type" "resource name"
+resource "aws_instance" "vm_web" {
+  # count       = 2
+  # ami         = data.aws_ami.ubuntu.id
+  ami         = data.aws_ami.amazon_linux.id
+  # ami           = "ami-0f5470fce514b0d36" # get from aws > ec2 > instances > Launch an instance
+  instance_type = var.instance_type
+
+  # vpc_security_group_ids = [aws_security_group.vm_web.id]
+  # vpc_security_group_ids = [module.security_web.security_group_id]
+  tags = {
+    Name = "server for web"
+    Env  = "dev"
+  }
+
+  # lifecycle {
+  #   create_before_destroy = true
+  # }
+}
+
 
 data "aws_ami" "amazon_linux" {
   most_recent = true
