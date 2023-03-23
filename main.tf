@@ -55,6 +55,21 @@ resource "aws_instance" "vm_web" {
   # }
 }
 
+module "security_web" {
+  source  = "terraform-aws-modules/security-group/aws"
+  version = "4.17.1"
+  name    = "web_new"
+
+  # vpc_id    = data.aws_vpc.default.id
+  vpc_id      = module.vpc.public_subnets.id[0]
+
+  ingress_cidr_blocks      = ["0.0.0.0/0"]
+  ingress_rules            = ["https-443-tcp", "http-80-tcp"]
+
+  egress_cidr_blocks      = ["0.0.0.0/0"]
+  egress_rules            = ["all-all"]
+}
+
 data "aws_ami" "amazon_linux" {
   most_recent = true
   filter {
@@ -106,21 +121,6 @@ data "aws_ami" "amazon_linux" {
 #   cidr_blocks         = ["0.0.0.0/0"]
 #   security_group_id   = aws_security_group.vm_web.id
 # }
-
-module "security_web" {
-  source  = "terraform-aws-modules/security-group/aws"
-  version = "4.17.1"
-  name    = "web_new"
-
-  # vpc_id    = data.aws_vpc.default.id
-  vpc_id      = module.vpc.public_subnets[0]
-
-  ingress_cidr_blocks      = ["0.0.0.0/0"]
-  ingress_rules            = ["https-443-tcp", "http-80-tcp"]
-
-  egress_cidr_blocks      = ["0.0.0.0/0"]
-  egress_rules            = ["all-all"]
-}
 
 # ***EIP***
 # resource "aws_eip" "blog" {
