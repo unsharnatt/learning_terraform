@@ -58,10 +58,10 @@ resource "aws_instance" "vm_web" {
 module "security_web" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "4.17.1"
-  name    = "web_new"
+  name    = "vm_web"
 
   # vpc_id    = data.aws_vpc.default.id
-  vpc_id      = module.vpc.public_subnets[0].id
+  vpc_id      = module.vpc.public_subnets[0]
 
   ingress_cidr_blocks      = ["0.0.0.0/0"]
   ingress_rules            = ["https-443-tcp", "http-80-tcp"]
