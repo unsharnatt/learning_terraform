@@ -51,25 +51,42 @@ module "security_web" {
 }
 
 #        "resource type" "resource name"
-resource "aws_instance" "vm_web" {
-  # count       = 2
-  # ami         = data.aws_ami.ubuntu.id
-  # ami         = data.aws_ami.amazon_linux.id
-  ami           = data.aws_ami.tomcat_linux.id
-  # ami           = "ami-0f5470fce514b0d36" # get from aws > ec2 > instances > Launch an instance
+# resource "aws_instance" "vm_web" {
+#   # count       = 2
+#   # ami         = data.aws_ami.ubuntu.id
+#   # ami         = data.aws_ami.amazon_linux.id
+#   ami           = data.aws_ami.tomcat_linux.id
+#   # ami           = "ami-0f5470fce514b0d36" # get from aws > ec2 > instances > Launch an instance
+#   instance_type = var.instance_type
+
+#   subnet_id              = module.web_vpc.public_subnets[0]
+#   # vpc_security_group_ids = [aws_security_group.vm_web.id]
+#   vpc_security_group_ids = [module.security_web.security_group_id]
+#   tags = {
+#     Name = "server for web"
+#     Env  = "dev"
+#   }
+
+#   # lifecycle {
+#   #   create_before_destroy = true
+#   # }
+# }
+
+module "autoscaling" {
+  source    = "terraform-aws-modules/autoscaling/aws"
+  # version = "6.5.2"
+
+  name      = "vm_web"
+  min_size  = 1
+  max_size  = 2
+
+  vpc_zone_identifier = module.web_vpc.public_subnets
+  target_group_arns   = module.alb.target_group_arns
+  security_groups     = [module.security_web.security_group_id]
+
+  image_id      = data.aws_ami.tomcat_linux
   instance_type = var.instance_type
 
-  subnet_id              = module.web_vpc.public_subnets[0]
-  # vpc_security_group_ids = [aws_security_group.vm_web.id]
-  vpc_security_group_ids = [module.security_web.security_group_id]
-  tags = {
-    Name = "server for web"
-    Env  = "dev"
-  }
-
-  # lifecycle {
-  #   create_before_destroy = true
-  # }
 }
 
 module "alb" {
@@ -94,16 +111,13 @@ module "alb" {
       backend_protocol = "HTTP"
       backend_port     = 80
       target_type      = "instance"
-      targets = {
-        my_target = {
-          target_id = aws_instance.vm_web.id
-          port = 80
-        }
-        # my_other_target = {
-        #   target_id = "i-a1b2c3d4e5f6g7h8i"
-        #   port = 8080
-        # }
-      }
+      # no targets, for the sake of using auto-scaling
+      # targets = {
+      #   my_target = {
+      #     target_id = aws_instance.vm_web.id
+      #     port = 80
+      #   }
+      # }
     }
   ]
 
