@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "aws" {
-  profile = "default"
+  # profile = "default" failed to get shared config profile, default
   region  = "eu-west-2"
 }
 
