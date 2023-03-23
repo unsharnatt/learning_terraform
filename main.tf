@@ -84,7 +84,7 @@ module "autoscaling" {
   target_group_arns   = module.alb.target_group_arns
   security_groups     = [module.security_web.security_group_id]
 
-  image_id      = data.aws_ami.tomcat_linux
+  image_id      = data.aws_ami.tomcat_linux.id
   instance_type = var.instance_type
 
 }
