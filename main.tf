@@ -54,7 +54,8 @@ module "security_web" {
 resource "aws_instance" "vm_web" {
   # count       = 2
   # ami         = data.aws_ami.ubuntu.id
-  ami         = data.aws_ami.amazon_linux.id
+  # ami         = data.aws_ami.amazon_linux.id
+  ami           = data.aws_ami.tomcat_linux.id
   # ami           = "ami-0f5470fce514b0d36" # get from aws > ec2 > instances > Launch an instance
   instance_type = var.instance_type
 
