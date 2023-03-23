@@ -37,7 +37,7 @@ module "vpc" {
 
 module "security_web" {
   source  = "terraform-aws-modules/security-group/aws"
-  version = "4.17.1"
+  # version = "4.17.1"
   name    = "vm_web"
 
   # vpc_id    = data.aws_vpc.default.id
