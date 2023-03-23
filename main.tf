@@ -59,6 +59,7 @@ resource "aws_instance" "vm_web" {
   # ami           = "ami-0f5470fce514b0d36" # get from aws > ec2 > instances > Launch an instance
   instance_type = var.instance_type
 
+  subnet_id              = module.web_vpc.public_subnets[0]
   # vpc_security_group_ids = [aws_security_group.vm_web.id]
   vpc_security_group_ids = [module.security_web.security_group_id]
   tags = {
